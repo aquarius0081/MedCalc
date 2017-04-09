@@ -166,7 +166,7 @@ public class MedCalcActivity extends AppCompatActivity {
 
     private void calculate() {
         String selectedComputation = ddlComputations.getSelectedItem().toString();
-        Toast.makeText(MedCalcActivity.this, selectedComputation, Toast.LENGTH_SHORT).show();
+//        Toast.makeText(MedCalcActivity.this, selectedComputation, Toast.LENGTH_SHORT).show();
         c = myDbHelper.rawQuery(getString(R.string.getComputationTypeByCompName), new String[]{selectedComputation});
         String compType = null;
         if (c.moveToFirst()) {
@@ -192,19 +192,23 @@ public class MedCalcActivity extends AppCompatActivity {
             sexCoefficient = 1.05;
         }
 
-        EditText weightText = (EditText) findViewById(paramsMap.get("Вес"));
-        int weight = Integer.valueOf(weightText.getText().toString());
+        try {
+            EditText weightText = (EditText) findViewById(paramsMap.get("Вес"));
+            int weight = Integer.valueOf(weightText.getText().toString());
 
-        EditText ageText = (EditText) findViewById(paramsMap.get("Возраст"));
-        int age = Integer.valueOf(ageText.getText().toString());
+            EditText ageText = (EditText) findViewById(paramsMap.get("Возраст"));
+            int age = Integer.valueOf(ageText.getText().toString());
 
-        EditText kreatininText = (EditText) findViewById(paramsMap.get("Креатинин"));
-        int сreatinine = Integer.valueOf(kreatininText.getText().toString());
+            EditText kreatininText = (EditText) findViewById(paramsMap.get("Креатинин"));
+            int сreatinine = Integer.valueOf(kreatininText.getText().toString());
 
-        double result = sexCoefficient * ((140 - age) * weight) / сreatinine;
+            double result = sexCoefficient * ((140 - age) * weight) / сreatinine;
 
-        resultTextView.setText("СКФ = " + String.valueOf(result));
-        resultTextView.setVisibility(View.VISIBLE);
+            resultTextView.setText("СКФ = " + String.valueOf(result));
+            resultTextView.setVisibility(View.VISIBLE);
+        } catch (Exception e) {
+            Toast.makeText(MedCalcActivity.this, "Введены некорректные входные данные", Toast.LENGTH_SHORT).show();
+        }
 
     }
 }
