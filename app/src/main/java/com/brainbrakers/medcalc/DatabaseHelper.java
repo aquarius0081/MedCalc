@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,9 +21,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static String DB_NAME = "med_calc_db.db";
     private SQLiteDatabase myDataBase;
     private Resources resources;
+    private Context myContext;
 
     public DatabaseHelper(Context context, Resources resources) {
         super(context, DB_NAME, null, 10);
+        myContext = context;
         this.DB_PATH = context.getFilesDir().getPath() + "/";
         this.resources = resources;
         Log.e("Path 1", DB_PATH);
@@ -43,16 +46,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     private boolean checkDataBase() {
-        SQLiteDatabase checkDB = null;
-        try {
-            String myPath = DB_PATH + DB_NAME;
-            checkDB = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READONLY);
-        } catch (SQLiteException e) {
-        }
-        if (checkDB != null) {
-            checkDB.close();
-        }
-        return checkDB != null ? true : false;
+        File dbFile = myContext.getDatabasePath(DB_NAME);
+        return dbFile.exists();
     }
 
     private void copyDataBase() throws IOException {
@@ -101,6 +96,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public Cursor query(String table, String[] columns, String selection, String[] selectionArgs, String groupBy, String having, String orderBy) {
         return myDataBase.query(table, null, null, null, null, null, null);
+    }
+
+    public Cursor rawQuery(final String sqlStatement, final String[] selectionArgs){
+        return myDataBase.rawQuery(sqlStatement, selectionArgs);
     }
 
 

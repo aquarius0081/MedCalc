@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">MedCalc</string>
+    <string name="notSelectedCompItem">Выберите расчет...</string>
+    <string name="getParamsByCompId">
+        SELECT CompParams.Name, CompParamTypes.Name, CompParams.Id, CompParams.DefaultValue FROM CompParams
+        INNER JOIN Computations ON CompParams.ComputationId = Computations.Id
+        INNER JOIN CompParamTypes ON CompParamTypes.Id = CompParams.TypeId WHERE Computations.Name = ?
+    </string>
+    <string name="getComputationTypeByCompName">
+        SELECT ComputationTypes.Name FROM Computations INNER JOIN ComputationTypes ON ComputationTypes.Id = Computations.TypeId WHERE Computations.Name = ?
+    </string>
+    <string name="calculate">Рассчитать</string>
+    <string name="resultText">resultValue</string>
 </resources>
