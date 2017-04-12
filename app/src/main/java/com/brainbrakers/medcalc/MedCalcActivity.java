@@ -15,10 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
-import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class MedCalcActivity extends AppCompatActivity {
@@ -29,8 +26,9 @@ public class MedCalcActivity extends AppCompatActivity {
     LinearLayout dynamicContentLayout;
     Spinner ddlComputations;
     DatabaseHelper myDbHelper;
-    HashMap<String, Integer> paramsMap;
     TextView resultTextView;
+    TextView formulaTextView;
+    TextView descriptionTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +40,10 @@ public class MedCalcActivity extends AppCompatActivity {
         btnCalculate.setVisibility(View.INVISIBLE);
         resultTextView = (TextView) findViewById(R.id.resultTextView);
         resultTextView.setVisibility(View.INVISIBLE);
+        formulaTextView = (TextView) findViewById(R.id.formulaTextView);
+        formulaTextView.setVisibility(View.INVISIBLE);
+        descriptionTextView = (TextView) findViewById(R.id.descriptiontextView);
+        descriptionTextView.setVisibility(View.INVISIBLE);
 
         btnCalculate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -61,18 +63,12 @@ public class MedCalcActivity extends AppCompatActivity {
         } catch (SQLException sqle) {
             throw sqle;
         }
-        //Toast.makeText(MedCalcActivity.this, "Success", Toast.LENGTH_SHORT).show();
         c = myDbHelper.rawQuery("SELECT Name FROM Computations", null);
         List<String> compList = new ArrayList<>();
         compList.add(notSelectedCompItem);
         if (c.moveToFirst()) {
             do {
                 compList.add(c.getString(0)); //Name
-//                Toast.makeText(MedCalcActivity.this,
-//                        "Id: " + c.getString(0) + "\n" +
-//                                "Name: " + c.getString(1) + "\n" +
-//                                "TypeId: " + c.getString(2) + "\n",
-//                        Toast.LENGTH_LONG).show();
             } while (c.moveToNext());
         }
 
@@ -87,65 +83,55 @@ public class MedCalcActivity extends AppCompatActivity {
                 dynamicContentLayout.removeAllViews();
                 btnCalculate.setVisibility(View.INVISIBLE);
                 resultTextView.setVisibility(View.INVISIBLE);
-                paramsMap = new HashMap<>();
+                formulaTextView.setVisibility(View.INVISIBLE);
+                descriptionTextView.setVisibility(View.INVISIBLE);
                 final String selectedCompItem = (String) parent.getItemAtPosition(pos);
                 if (!selectedCompItem.equals(notSelectedCompItem)) {
                     btnCalculate.setVisibility(View.VISIBLE);
-//                    Toast.makeText(MedCalcActivity.this, selectedCompItem,
-//                            Toast.LENGTH_LONG).show();
                     c = myDbHelper.rawQuery(getString(R.string.getParamsByCompId),
                             new String[]{selectedCompItem});
                     if (c.moveToFirst()) {
                         do {
                             final String paramName = c.getString(0);
-                            final String paramType = c.getString(1);
+                            final CompParamTypes paramType = CompParamTypes.values()[c.getInt(1)];
                             final int paramId = c.getInt(2);
                             final String paramDefaultValue = c.getString(3);
-                            paramsMap.put(paramName, paramId);
-//                            Toast.makeText(MedCalcActivity.this,
-//                                    "ParamName: " + paramName + "\n" +
-//                                            "TypeName: " + paramType + "\n" +
-//                                            "ParamId: " + paramId + "\n",
-//                                    Toast.LENGTH_SHORT).show();
 
                             LinearLayout linearLayout = new LinearLayout(MedCalcActivity.this);
                             TextView textView = new TextView(MedCalcActivity.this);
                             textView.setText(paramName);
                             LinearLayout.LayoutParams layoutParams =
-                                    new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
-                                            LinearLayout.LayoutParams.WRAP_CONTENT);
+                                    new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                                            LinearLayout.LayoutParams.WRAP_CONTENT, 2);
                             textView.setLayoutParams(layoutParams);
                             linearLayout.addView(textView);
 
                             switch (paramType) {
-                                case "Integer":
+                                case Integer:
 
                                     EditText editText = new EditText(MedCalcActivity.this);
                                     editText.setId(paramId);
                                     layoutParams =
-                                            new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
-                                                    LinearLayout.LayoutParams.WRAP_CONTENT);
+                                            new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                                                    LinearLayout.LayoutParams.WRAP_CONTENT, 1);
                                     editText.setLayoutParams(layoutParams);
                                     linearLayout.addView(editText);
                                     dynamicContentLayout.addView(linearLayout);
 
-//                                    Toast.makeText(MedCalcActivity.this, paramName, Toast.LENGTH_SHORT).show();
                                     break;
-                                case "Select":
+                                case Select:
                                     Spinner spinner = new Spinner(MedCalcActivity.this);
                                     spinner.setId(paramId);
-                                    ArrayAdapter<String> adapter = new ArrayAdapter<String>(MedCalcActivity.this,
-                                            android.R.layout.simple_spinner_item, paramDefaultValue.split(";"));
-                                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // Specify the layout to use when the list of choices appears
+                                    ArrayAdapter<String> adapter = new ArrayAdapter<>(MedCalcActivity.this,
+                                            android.R.layout.simple_spinner_dropdown_item, paramDefaultValue.split(";"));
                                     spinner.setAdapter(adapter); // Apply the adapter to the spinner
                                     layoutParams =
-                                            new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
-                                                    LinearLayout.LayoutParams.WRAP_CONTENT);
+                                            new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                                                    LinearLayout.LayoutParams.WRAP_CONTENT, 1);
                                     spinner.setLayoutParams(layoutParams);
                                     linearLayout.addView(spinner);
                                     dynamicContentLayout.addView(linearLayout);
 
-//                                    Toast.makeText(MedCalcActivity.this, paramName, Toast.LENGTH_SHORT).show();
                                     break;
                                 default:
                                     Toast.makeText(MedCalcActivity.this, paramName + " " + paramType, Toast.LENGTH_SHORT).show();
@@ -166,49 +152,93 @@ public class MedCalcActivity extends AppCompatActivity {
 
     private void calculate() {
         String selectedComputation = ddlComputations.getSelectedItem().toString();
-//        Toast.makeText(MedCalcActivity.this, selectedComputation, Toast.LENGTH_SHORT).show();
-        c = myDbHelper.rawQuery(getString(R.string.getComputationTypeByCompName), new String[]{selectedComputation});
-        String compType = null;
+        c = myDbHelper.rawQuery(getString(R.string.getComputationDetailsByCompName), new String[]{selectedComputation});
+        String compDesc = null;
+        ComputationTypes compType = null;
         if (c.moveToFirst()) {
-            compType = c.getString(0);
+            compType = ComputationTypes.values()[c.getInt(0)];
+            compDesc = "Описание:\n" + c.getString(1);
             c.moveToNext();
         }
-        if (compType != null) {
+        try {
             switch (compType) {
-                case "СКФ":
+                case SKF:
                     calculateSKF();
+                    break;
+                case IMT:
+                    calculateIMT();
                     break;
                 default:
                     Toast.makeText(MedCalcActivity.this, "Расчет не поддерживается", Toast.LENGTH_SHORT).show();
                     break;
             }
+        } catch (Exception e) {
+            return;
         }
+        descriptionTextView.setText(compDesc);
+        descriptionTextView.setVisibility(View.VISIBLE);
     }
 
+    /**
+     * Расчет Скорости Клубочковой Фильтрации
+     */
     private void calculateSKF() {
-        double sexCoefficient = 1.23; //For man
-        Spinner sexSpinner = (Spinner) findViewById(paramsMap.get("Пол"));
-        if (((String) sexSpinner.getSelectedItem()).equalsIgnoreCase("женщина")) {
+        double sexCoefficient = 1.23; //For men
+        Spinner sexSpinner = (Spinner) findViewById(CompParams.SKF_SEX.ordinal());
+        if (((String) sexSpinner.getSelectedItem()).equalsIgnoreCase("женский")) {
             sexCoefficient = 1.05;
         }
+        double weight = 0.0;
+        double age = 0.0;
+        double сreatinine = 0.0;
 
         try {
-            EditText weightText = (EditText) findViewById(paramsMap.get("Вес"));
-            int weight = Integer.valueOf(weightText.getText().toString());
+            EditText weightText = (EditText) findViewById(CompParams.SKF_WEIGHT.ordinal());
+            weight = Double.valueOf(weightText.getText().toString());
 
-            EditText ageText = (EditText) findViewById(paramsMap.get("Возраст"));
-            int age = Integer.valueOf(ageText.getText().toString());
+            EditText ageText = (EditText) findViewById(CompParams.SKF_AGE.ordinal());
+            age = Double.valueOf(ageText.getText().toString());
 
-            EditText kreatininText = (EditText) findViewById(paramsMap.get("Креатинин"));
-            int сreatinine = Integer.valueOf(kreatininText.getText().toString());
-
-            double result = sexCoefficient * ((140 - age) * weight) / сreatinine;
-
-            resultTextView.setText("СКФ = " + String.valueOf(result));
-            resultTextView.setVisibility(View.VISIBLE);
+            EditText kreatininText = (EditText) findViewById(CompParams.SKF_CREATININE.ordinal());
+            сreatinine = Double.valueOf(kreatininText.getText().toString());
         } catch (Exception e) {
             Toast.makeText(MedCalcActivity.this, "Введены некорректные входные данные", Toast.LENGTH_SHORT).show();
+            throw e;
         }
 
+            double result = sexCoefficient * ((140.0 - age) * weight) / сreatinine;
+
+            resultTextView.setText(String.format("СКФ = %s", String.valueOf(result)));
+            resultTextView.setVisibility(View.VISIBLE);
+
+            formulaTextView.setText(String.format("Расчет по формуле: %s x ((140 - Возраст(годы)) х вес(кг)) / Креатинин(мкмоль/л)", sexCoefficient));
+            formulaTextView.setVisibility(View.VISIBLE);
     }
+
+    /**
+     * Расчет Индекса Массы Тела
+     */
+    private void calculateIMT() {
+        double weight = 0.0;
+        double height = 0.0;
+        try {
+            EditText weightText = (EditText) findViewById(CompParams.IMT_WEIGHT.ordinal());
+            weight = Double.valueOf(weightText.getText().toString());
+
+            EditText heightText = (EditText) findViewById(CompParams.IMT_HEIGHT.ordinal());
+            height = Double.valueOf(heightText.getText().toString());
+        } catch (Exception e) {
+            Toast.makeText(MedCalcActivity.this, "Введены некорректные входные данные", Toast.LENGTH_SHORT).show();
+            throw e;
+        }
+
+            double result = (weight * 100.0 * 100.0) / (height * height);
+
+            resultTextView.setText(String.format("ИМТ = %s", String.valueOf(result)));
+            resultTextView.setVisibility(View.VISIBLE);
+
+            formulaTextView.setText("Расчет по формуле: Вес(кг) / Рост(см)^2");
+            formulaTextView.setVisibility(View.VISIBLE);
+    }
+
 }

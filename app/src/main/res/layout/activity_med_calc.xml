@@ -15,7 +15,7 @@
         android:id="@+id/DynamicContent"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"></LinearLayout>
+        android:orientation="vertical" />
 
     <Button
         android:id="@+id/btnCalculate"
@@ -27,9 +27,23 @@
         android:id="@+id/resultTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:height="100dp"
         android:gravity="center"
-        android:minHeight="100dp"
         android:text="@string/resultText"
+        android:textColor="@android:color/black"
         android:textSize="30sp" />
+
+    <TextView
+        android:id="@+id/formulaTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/formulaText"
+        android:textColor="@android:color/black" />
+
+    <TextView
+        android:id="@+id/descriptiontextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/descText"
+        android:textColor="@android:color/black" />
+
 </LinearLayout>

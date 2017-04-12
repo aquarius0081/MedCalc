@@ -1,14 +1,16 @@
 <resources>
-    <string name="app_name">MedCalc</string>
+    <string name="app_name">DocCalc</string>
     <string name="notSelectedCompItem">Выберите расчет...</string>
     <string name="getParamsByCompId">
-        SELECT CompParams.Name, CompParamTypes.Name, CompParams.Id, CompParams.DefaultValue FROM CompParams
+        SELECT CompParams.Name, CompParams.TypeId, CompParams.Id, CompParams.DefaultValue FROM CompParams
         INNER JOIN Computations ON CompParams.ComputationId = Computations.Id
-        INNER JOIN CompParamTypes ON CompParamTypes.Id = CompParams.TypeId WHERE Computations.Name = ?
+        WHERE Computations.Name = ?
     </string>
-    <string name="getComputationTypeByCompName">
-        SELECT ComputationTypes.Name FROM Computations INNER JOIN ComputationTypes ON ComputationTypes.Id = Computations.TypeId WHERE Computations.Name = ?
+    <string name="getComputationDetailsByCompName">
+        SELECT ComputationTypes.Id, Computations.Description FROM Computations INNER JOIN ComputationTypes ON ComputationTypes.Id = Computations.TypeId WHERE Computations.Name = ?
     </string>
     <string name="calculate">Рассчитать</string>
     <string name="resultText">resultValue</string>
+    <string name="formulaText">formulaText</string>
+    <string name="descText">descText</string>
 </resources>

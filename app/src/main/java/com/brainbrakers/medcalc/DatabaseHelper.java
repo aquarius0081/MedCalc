@@ -18,7 +18,7 @@ import java.io.OutputStream;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     String DB_PATH = null;
-    private static String DB_NAME = "med_calc_db2.db";
+    private static String DB_NAME = "med_calc_db6.db";
     private SQLiteDatabase myDataBase;
     private Resources resources;
     private Context myContext;
@@ -51,7 +51,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     private void copyDataBase() throws IOException {
-        InputStream myInput = resources.openRawResource(R.raw.med_calc_db2);
+        InputStream myInput = resources.openRawResource(R.raw.med_calc_db6);
         String outFileName = DB_PATH + DB_NAME;
         OutputStream myOutput = new FileOutputStream(outFileName);
         byte[] buffer = new byte[10];
