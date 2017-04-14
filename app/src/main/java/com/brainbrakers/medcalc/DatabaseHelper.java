@@ -5,11 +5,9 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,14 +16,12 @@ import java.io.OutputStream;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     String DB_PATH = null;
-    private static String DB_NAME = "med_calc_db6.db";
+    private static String DB_NAME = "med_calc_db.db";
     private SQLiteDatabase myDataBase;
     private Resources resources;
-    private Context myContext;
 
     public DatabaseHelper(Context context, Resources resources) {
-        super(context, DB_NAME, null, 10);
-        myContext = context;
+        super(context, DB_NAME, null, 12);
         this.DB_PATH = context.getFilesDir().getPath() + "/";
         this.resources = resources;
         Log.e("Path 1", DB_PATH);
@@ -33,25 +29,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 
     public void createDataBase() throws IOException {
-        boolean dbExist = checkDataBase();
-        if (dbExist) {
-        } else {
-            this.getReadableDatabase();
-            try {
-                copyDataBase();
-            } catch (IOException e) {
-                throw new Error("Error copying database");
-            }
+        myDataBase = this.getWritableDatabase();
+        try {
+            copyDataBase();
+        } catch (IOException e) {
+            throw new Error("Error copying database");
         }
     }
 
-    private boolean checkDataBase() {
-        File dbFile = myContext.getDatabasePath(DB_NAME);
-        return dbFile.exists();
-    }
-
     private void copyDataBase() throws IOException {
-        InputStream myInput = resources.openRawResource(R.raw.med_calc_db6);
+        InputStream myInput = resources.openRawResource(R.raw.med_calc_db);
         String outFileName = DB_PATH + DB_NAME;
         OutputStream myOutput = new FileOutputStream(outFileName);
         byte[] buffer = new byte[10];
@@ -67,7 +54,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public void openDataBase() throws SQLException {
         String myPath = DB_PATH + DB_NAME;
-        myDataBase = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READONLY);
+        myDataBase = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READWRITE);
 
     }
 
@@ -81,6 +68,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+        onUpgrade(db, 1, 2);
     }
 
     @Override
@@ -98,7 +86,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return myDataBase.query(table, null, null, null, null, null, null);
     }
 
-    public Cursor rawQuery(final String sqlStatement, final String[] selectionArgs){
+    public Cursor rawQuery(final String sqlStatement, final String[] selectionArgs) {
         return myDataBase.rawQuery(sqlStatement, selectionArgs);
     }
 

@@ -7,5 +7,7 @@ public enum CompParams {
     SKF_AGE,
     SKF_SEX,
     SKF_CREATININE,
-    IMT_WEIGHT
+    IMT_WEIGHT,
+    BSA_HEIGHT,
+    BSA_WEIGHT
 }

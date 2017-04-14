@@ -168,6 +168,9 @@ public class MedCalcActivity extends AppCompatActivity {
                 case IMT:
                     calculateIMT();
                     break;
+                case BSA:
+                    calculateBSA();
+                    break;
                 default:
                     Toast.makeText(MedCalcActivity.this, "Расчет не поддерживается", Toast.LENGTH_SHORT).show();
                     break;
@@ -177,6 +180,32 @@ public class MedCalcActivity extends AppCompatActivity {
         }
         descriptionTextView.setText(compDesc);
         descriptionTextView.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * Расчет площади тела по формуле Дюбуа
+     */
+    private void calculateBSA() {
+        double weight;
+        double height;
+        try {
+            EditText weightText = (EditText) findViewById(CompParams.BSA_WEIGHT.ordinal());
+            weight = Double.valueOf(weightText.getText().toString());
+
+            EditText heightText = (EditText) findViewById(CompParams.BSA_HEIGHT.ordinal());
+            height = Double.valueOf(heightText.getText().toString());
+        } catch (Exception e) {
+            Toast.makeText(MedCalcActivity.this, R.string.incorrectInputError, Toast.LENGTH_SHORT).show();
+            throw e;
+        }
+
+        double result = 0.007184 * Math.pow(height, 0.725) * Math.pow(weight, 0.425);
+
+        resultTextView.setText(String.format("BSA = %s", String.valueOf(result)));
+        resultTextView.setVisibility(View.VISIBLE);
+
+        formulaTextView.setText("Расчет по формуле: 0.007184 x Рост(см)^0.725 x Вес(кг)^0.425");
+        formulaTextView.setVisibility(View.VISIBLE);
     }
 
     /**
@@ -202,17 +231,17 @@ public class MedCalcActivity extends AppCompatActivity {
             EditText kreatininText = (EditText) findViewById(CompParams.SKF_CREATININE.ordinal());
             сreatinine = Double.valueOf(kreatininText.getText().toString());
         } catch (Exception e) {
-            Toast.makeText(MedCalcActivity.this, "Введены некорректные входные данные", Toast.LENGTH_SHORT).show();
+            Toast.makeText(MedCalcActivity.this, R.string.incorrectInputError, Toast.LENGTH_SHORT).show();
             throw e;
         }
 
-            double result = sexCoefficient * ((140.0 - age) * weight) / сreatinine;
+        double result = sexCoefficient * ((140.0 - age) * weight) / сreatinine;
 
-            resultTextView.setText(String.format("СКФ = %s", String.valueOf(result)));
-            resultTextView.setVisibility(View.VISIBLE);
+        resultTextView.setText(String.format("СКФ = %s", String.valueOf(result)));
+        resultTextView.setVisibility(View.VISIBLE);
 
-            formulaTextView.setText(String.format("Расчет по формуле: %s x ((140 - Возраст(годы)) х вес(кг)) / Креатинин(мкмоль/л)", sexCoefficient));
-            formulaTextView.setVisibility(View.VISIBLE);
+        formulaTextView.setText(String.format("Расчет по формуле: %s x ((140 - Возраст(годы)) х вес(кг)) / Креатинин(мкмоль/л)", sexCoefficient));
+        formulaTextView.setVisibility(View.VISIBLE);
     }
 
     /**
@@ -228,17 +257,17 @@ public class MedCalcActivity extends AppCompatActivity {
             EditText heightText = (EditText) findViewById(CompParams.IMT_HEIGHT.ordinal());
             height = Double.valueOf(heightText.getText().toString());
         } catch (Exception e) {
-            Toast.makeText(MedCalcActivity.this, "Введены некорректные входные данные", Toast.LENGTH_SHORT).show();
+            Toast.makeText(MedCalcActivity.this, R.string.incorrectInputError, Toast.LENGTH_SHORT).show();
             throw e;
         }
 
-            double result = (weight * 100.0 * 100.0) / (height * height);
+        double result = (weight * 100.0 * 100.0) / (height * height);
 
-            resultTextView.setText(String.format("ИМТ = %s", String.valueOf(result)));
-            resultTextView.setVisibility(View.VISIBLE);
+        resultTextView.setText(String.format("ИМТ = %s", String.valueOf(result)));
+        resultTextView.setVisibility(View.VISIBLE);
 
-            formulaTextView.setText("Расчет по формуле: Вес(кг) / Рост(см)^2");
-            formulaTextView.setVisibility(View.VISIBLE);
+        formulaTextView.setText("Расчет по формуле: Вес(кг) / Рост(см)^2");
+        formulaTextView.setVisibility(View.VISIBLE);
     }
 
 }

@@ -13,4 +13,5 @@
     <string name="resultText">resultValue</string>
     <string name="formulaText">formulaText</string>
     <string name="descText">descText</string>
+    <string name="incorrectInputError">Введены некорректные входные данные</string>
 </resources>
