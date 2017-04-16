@@ -15,13 +15,14 @@ import java.io.OutputStream;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
-    String DB_PATH = null;
-    private static String DB_NAME = "med_calc_db.db";
+    private String DB_PATH = null;
+    private static final String DB_NAME = "med_calc_db.db";
     private SQLiteDatabase myDataBase;
     private Resources resources;
+    private static final int DB_VERSION = 12;
 
     public DatabaseHelper(Context context, Resources resources) {
-        super(context, DB_NAME, null, 12);
+        super(context, DB_NAME, null, DB_VERSION);
         this.DB_PATH = context.getFilesDir().getPath() + "/";
         this.resources = resources;
         Log.e("Path 1", DB_PATH);

@@ -157,7 +157,9 @@ public class MedCalcActivity extends AppCompatActivity {
         ComputationTypes compType = null;
         if (c.moveToFirst()) {
             compType = ComputationTypes.values()[c.getInt(0)];
-            compDesc = "Описание:\n" + c.getString(1);
+            if (!c.isNull(1)) {
+                compDesc = "Описание:\n" + c.getString(1);
+            }
             c.moveToNext();
         }
         try {
@@ -178,8 +180,10 @@ public class MedCalcActivity extends AppCompatActivity {
         } catch (Exception e) {
             return;
         }
-        descriptionTextView.setText(compDesc);
-        descriptionTextView.setVisibility(View.VISIBLE);
+        if (compDesc != null && !compDesc.isEmpty()) {
+            descriptionTextView.setText(compDesc);
+            descriptionTextView.setVisibility(View.VISIBLE);
+        }
     }
 
     /**
