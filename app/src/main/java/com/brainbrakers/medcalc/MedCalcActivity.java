@@ -61,6 +61,7 @@ public class MedCalcActivity extends AppCompatActivity {
         try {
             myDbHelper.openDataBase();
         } catch (SQLException sqle) {
+            sqle.printStackTrace();
             throw sqle;
         }
         c = myDbHelper.rawQuery("SELECT Name FROM Computations", null);
@@ -73,7 +74,7 @@ public class MedCalcActivity extends AppCompatActivity {
         }
 
         ddlComputations = (Spinner) findViewById(R.id.CompSelect);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, compList);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, compList);
         ddlComputations.setAdapter(adapter);
 
         AdapterView.OnItemSelectedListener itemSelectedListener = new AdapterView.OnItemSelectedListener() {
@@ -163,19 +164,21 @@ public class MedCalcActivity extends AppCompatActivity {
             c.moveToNext();
         }
         try {
-            switch (compType) {
-                case SKF:
-                    calculateSKF();
-                    break;
-                case IMT:
-                    calculateIMT();
-                    break;
-                case BSA:
-                    calculateBSA();
-                    break;
-                default:
-                    Toast.makeText(MedCalcActivity.this, "Расчет не поддерживается", Toast.LENGTH_SHORT).show();
-                    break;
+            if (compType != null) {
+                switch (compType) {
+                    case SKF:
+                        calculateSKF();
+                        break;
+                    case IMT:
+                        calculateIMT();
+                        break;
+                    case BSA:
+                        calculateBSA();
+                        break;
+                    default:
+                        Toast.makeText(MedCalcActivity.this, "Расчет не поддерживается", Toast.LENGTH_SHORT).show();
+                        break;
+                }
             }
         } catch (Exception e) {
             return;
@@ -208,7 +211,7 @@ public class MedCalcActivity extends AppCompatActivity {
         resultTextView.setText(String.format("BSA = %s", String.valueOf(result)));
         resultTextView.setVisibility(View.VISIBLE);
 
-        formulaTextView.setText("Расчет по формуле: 0.007184 x Рост(см)^0.725 x Вес(кг)^0.425");
+        formulaTextView.setText(R.string.FormulaBSA);
         formulaTextView.setVisibility(View.VISIBLE);
     }
 
@@ -221,9 +224,9 @@ public class MedCalcActivity extends AppCompatActivity {
         if (((String) sexSpinner.getSelectedItem()).equalsIgnoreCase("женский")) {
             sexCoefficient = 1.05;
         }
-        double weight = 0.0;
-        double age = 0.0;
-        double сreatinine = 0.0;
+        double weight;
+        double age;
+        double сreatinine;
 
         try {
             EditText weightText = (EditText) findViewById(CompParams.SKF_WEIGHT.ordinal());
@@ -252,8 +255,8 @@ public class MedCalcActivity extends AppCompatActivity {
      * Расчет Индекса Массы Тела
      */
     private void calculateIMT() {
-        double weight = 0.0;
-        double height = 0.0;
+        double weight;
+        double height;
         try {
             EditText weightText = (EditText) findViewById(CompParams.IMT_WEIGHT.ordinal());
             weight = Double.valueOf(weightText.getText().toString());

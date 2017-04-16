@@ -14,4 +14,5 @@
     <string name="formulaText">formulaText</string>
     <string name="descText">descText</string>
     <string name="incorrectInputError">Введены некорректные входные данные</string>
+    <string name="FormulaBSA">Расчет по формуле: 0.007184 x Рост(см)^0.725 x Вес(кг)^0.425</string>
 </resources>
