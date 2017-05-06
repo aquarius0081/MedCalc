@@ -30,6 +30,16 @@ public class MedCalcActivity extends AppCompatActivity {
     TextView formulaTextView;
     TextView descriptionTextView;
 
+    /**
+     * Weight of parameter name. The less value the more space it takes
+     */
+    private final float paramNameWeight = 1;
+
+    /**
+     * Weight of parameter value. The less value the more space it takes
+     */
+    private final float paramValueWeight = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -103,7 +113,7 @@ public class MedCalcActivity extends AppCompatActivity {
                             textView.setText(paramName);
                             LinearLayout.LayoutParams layoutParams =
                                     new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
-                                            LinearLayout.LayoutParams.WRAP_CONTENT, 2);
+                                            LinearLayout.LayoutParams.WRAP_CONTENT, paramNameWeight);
                             textView.setLayoutParams(layoutParams);
                             linearLayout.addView(textView);
 
@@ -114,7 +124,7 @@ public class MedCalcActivity extends AppCompatActivity {
                                     editText.setId(paramId);
                                     layoutParams =
                                             new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
-                                                    LinearLayout.LayoutParams.WRAP_CONTENT, 1);
+                                                    LinearLayout.LayoutParams.WRAP_CONTENT, paramValueWeight);
                                     editText.setLayoutParams(layoutParams);
                                     linearLayout.addView(editText);
                                     dynamicContentLayout.addView(linearLayout);
@@ -128,7 +138,7 @@ public class MedCalcActivity extends AppCompatActivity {
                                     spinner.setAdapter(adapter); // Apply the adapter to the spinner
                                     layoutParams =
                                             new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
-                                                    LinearLayout.LayoutParams.WRAP_CONTENT, 1);
+                                                    LinearLayout.LayoutParams.WRAP_CONTENT, paramValueWeight);
                                     spinner.setLayoutParams(layoutParams);
                                     linearLayout.addView(spinner);
                                     dynamicContentLayout.addView(linearLayout);
@@ -175,6 +185,9 @@ public class MedCalcActivity extends AppCompatActivity {
                     case BSA:
                         calculateBSA();
                         break;
+                    case CPK:
+                        calculateCPK();
+                        break;
                     default:
                         Toast.makeText(MedCalcActivity.this, "Расчет не поддерживается", Toast.LENGTH_SHORT).show();
                         break;
@@ -187,6 +200,32 @@ public class MedCalcActivity extends AppCompatActivity {
             descriptionTextView.setText(compDesc);
             descriptionTextView.setVisibility(View.VISIBLE);
         }
+    }
+
+    /**
+     * Расчет ЦПК (Цветовой показатель крови)
+     */
+    private void calculateCPK() {
+        double hemoglobin;
+        double erythrocytes;
+        try {
+            EditText hemoglobinText = (EditText) findViewById(CompParams.CPK_HEMOGLOBIN.ordinal());
+            hemoglobin = Double.valueOf(hemoglobinText.getText().toString());
+
+            EditText erythrocytesText = (EditText) findViewById(CompParams.CPK_ERYTHROCYTES.ordinal());
+            erythrocytes = Double.valueOf(erythrocytesText.getText().toString());
+        } catch (Exception e) {
+            Toast.makeText(MedCalcActivity.this, R.string.incorrectInputError, Toast.LENGTH_SHORT).show();
+            throw e;
+        }
+
+        double result = (hemoglobin * 3) / erythrocytes;
+
+        resultTextView.setText(String.format("ЦПК = %s", String.valueOf(result)));
+        resultTextView.setVisibility(View.VISIBLE);
+
+        formulaTextView.setText(R.string.FormulaCPK);
+        formulaTextView.setVisibility(View.VISIBLE);
     }
 
     /**

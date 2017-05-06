@@ -5,5 +5,6 @@ public enum ComputationTypes {
     NOT_USED,
     SKF,
     IMT,
-    BSA
+    BSA,
+    CPK
 }

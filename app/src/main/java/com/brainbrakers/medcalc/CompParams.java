@@ -9,5 +9,7 @@ public enum CompParams {
     SKF_CREATININE,
     IMT_WEIGHT,
     BSA_HEIGHT,
-    BSA_WEIGHT
+    BSA_WEIGHT,
+    CPK_HEMOGLOBIN,
+    CPK_ERYTHROCYTES
 }
