@@ -7,13 +7,12 @@
         WHERE Computations.Name = ?
     </string>
     <string name="getComputationDetailsByCompName">
-        SELECT ComputationTypes.Id, Computations.Description FROM Computations INNER JOIN ComputationTypes ON ComputationTypes.Id = Computations.TypeId WHERE Computations.Name = ?
+        SELECT ComputationTypes.Id, Computations.Description, Computations.Formula FROM Computations
+        INNER JOIN ComputationTypes ON ComputationTypes.Id = Computations.TypeId WHERE Computations.Name = ?
     </string>
     <string name="calculate">Рассчитать</string>
     <string name="resultText">resultValue</string>
     <string name="formulaText">formulaText</string>
     <string name="descText">descText</string>
     <string name="incorrectInputError">Введены некорректные входные данные</string>
-    <string name="FormulaBSA">Расчет по формуле: 0.007184 x Рост(см)^0.725 x Вес(кг)^0.425</string>
-    <string name="FormulaCPK">Расчет по формуле: (Гемоглобин (г/л) * 3) / Эритроциты (первые 3 цифры)</string>
 </resources>

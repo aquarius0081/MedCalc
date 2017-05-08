@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -144,6 +145,13 @@ public class MedCalcActivity extends AppCompatActivity {
                                     dynamicContentLayout.addView(linearLayout);
 
                                     break;
+                                case Checkbox:
+                                    CheckBox checkBox = new CheckBox(MedCalcActivity.this);
+                                    checkBox.setId(paramId);
+                                    linearLayout.addView(checkBox);
+                                    dynamicContentLayout.addView(linearLayout);
+
+                                    break;
                                 default:
                                     Toast.makeText(MedCalcActivity.this, paramName + " " + paramType, Toast.LENGTH_SHORT).show();
                                     break;
@@ -166,10 +174,14 @@ public class MedCalcActivity extends AppCompatActivity {
         c = myDbHelper.rawQuery(getString(R.string.getComputationDetailsByCompName), new String[]{selectedComputation});
         String compDesc = null;
         ComputationTypes compType = null;
+        String compFormula = null;
         if (c.moveToFirst()) {
             compType = ComputationTypes.values()[c.getInt(0)];
             if (!c.isNull(1)) {
                 compDesc = "Описание:\n" + c.getString(1);
+            }
+            if (!c.isNull(2)) {
+                compFormula = "Расчет по формуле:\n" + c.getString(2);
             }
             c.moveToNext();
         }
@@ -188,6 +200,9 @@ public class MedCalcActivity extends AppCompatActivity {
                     case CPK:
                         calculateCPK();
                         break;
+                    case CHA2DS2:
+                        calculateCHA2DS2();
+                        break;
                     default:
                         Toast.makeText(MedCalcActivity.this, "Расчет не поддерживается", Toast.LENGTH_SHORT).show();
                         break;
@@ -196,10 +211,61 @@ public class MedCalcActivity extends AppCompatActivity {
         } catch (Exception e) {
             return;
         }
+        if (compFormula != null && !compFormula.isEmpty()){
+            formulaTextView.setText(compFormula);
+            formulaTextView.setVisibility(View.VISIBLE);
+        }
         if (compDesc != null && !compDesc.isEmpty()) {
             descriptionTextView.setText(compDesc);
             descriptionTextView.setVisibility(View.VISIBLE);
         }
+    }
+
+    /**
+     * Расчет по шкале CHA2DS2-VASc
+     */
+    private void calculateCHA2DS2() {
+        int chf;
+        int hypertension;
+        int age75;
+        int diabetes;
+        int stroke;
+        int vascular;
+        int age65;
+        int sexCategory;
+        try {
+            CheckBox chfCheckBox = (CheckBox) findViewById(CompParams.CHA2DS2_HEART_FIBRILATION.ordinal());
+            chf = chfCheckBox.isChecked() ? 1 : 0;
+
+            CheckBox hypertensionCheckBox = (CheckBox) findViewById(CompParams.CHA2DS2_HYPERTENSION.ordinal());
+            hypertension = hypertensionCheckBox.isChecked() ? 1 : 0;
+
+            CheckBox age75CheckBox = (CheckBox) findViewById(CompParams.CHA2DS2_AGE75.ordinal());
+            age75 = age75CheckBox.isChecked() ? 1 : 0;
+
+            CheckBox diabetesCheckBox = (CheckBox) findViewById(CompParams.CHA2DS2_DIABETES.ordinal());
+            diabetes = diabetesCheckBox.isChecked() ? 1 : 0;
+
+            CheckBox strokeCheckBox = (CheckBox) findViewById(CompParams.CHA2DS2_STROKE.ordinal());
+            stroke = strokeCheckBox.isChecked() ? 1 : 0;
+
+            CheckBox vascularCheckBox = (CheckBox) findViewById(CompParams.CHA2DS2_VASCULAR.ordinal());
+            vascular = vascularCheckBox.isChecked() ? 1 : 0;
+
+            CheckBox age65CheckBox = (CheckBox) findViewById(CompParams.CHA2DS2_AGE65.ordinal());
+            age65 = age65CheckBox.isChecked() ? 1 : 0;
+
+            CheckBox sexCategoryCheckBox = (CheckBox) findViewById(CompParams.CHA2DS2_SEX_CATEGORY.ordinal());
+            sexCategory = sexCategoryCheckBox.isChecked() ? 1 : 0;
+        } catch (Exception e) {
+            Toast.makeText(MedCalcActivity.this, R.string.incorrectInputError, Toast.LENGTH_SHORT).show();
+            throw e;
+        }
+
+        int result = 1 * chf + 1 * hypertension + 2 * age75 + 1 * diabetes + 2 * stroke + 1 * vascular + 1 * age65 + 1 * sexCategory;
+
+        resultTextView.setText(String.format("Результат = %s", String.valueOf(result)));
+        resultTextView.setVisibility(View.VISIBLE);
     }
 
     /**
@@ -223,9 +289,6 @@ public class MedCalcActivity extends AppCompatActivity {
 
         resultTextView.setText(String.format("ЦПК = %s", String.valueOf(result)));
         resultTextView.setVisibility(View.VISIBLE);
-
-        formulaTextView.setText(R.string.FormulaCPK);
-        formulaTextView.setVisibility(View.VISIBLE);
     }
 
     /**
@@ -249,9 +312,6 @@ public class MedCalcActivity extends AppCompatActivity {
 
         resultTextView.setText(String.format("BSA = %s", String.valueOf(result)));
         resultTextView.setVisibility(View.VISIBLE);
-
-        formulaTextView.setText(R.string.FormulaBSA);
-        formulaTextView.setVisibility(View.VISIBLE);
     }
 
     /**
@@ -285,9 +345,6 @@ public class MedCalcActivity extends AppCompatActivity {
 
         resultTextView.setText(String.format("СКФ = %s", String.valueOf(result)));
         resultTextView.setVisibility(View.VISIBLE);
-
-        formulaTextView.setText(String.format("Расчет по формуле: %s x ((140 - Возраст(годы)) х вес(кг)) / Креатинин(мкмоль/л)", sexCoefficient));
-        formulaTextView.setVisibility(View.VISIBLE);
     }
 
     /**
@@ -311,9 +368,6 @@ public class MedCalcActivity extends AppCompatActivity {
 
         resultTextView.setText(String.format("ИМТ = %s", String.valueOf(result)));
         resultTextView.setVisibility(View.VISIBLE);
-
-        formulaTextView.setText("Расчет по формуле: Вес(кг) / Рост(см)^2");
-        formulaTextView.setVisibility(View.VISIBLE);
     }
 
 }

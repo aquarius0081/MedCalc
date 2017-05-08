@@ -6,5 +6,6 @@ public enum ComputationTypes {
     SKF,
     IMT,
     BSA,
-    CPK
+    CPK,
+    CHA2DS2
 }
