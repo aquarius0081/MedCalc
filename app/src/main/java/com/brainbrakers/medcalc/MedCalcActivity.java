@@ -175,6 +175,7 @@ public class MedCalcActivity extends AppCompatActivity {
         String compDesc = null;
         ComputationTypes compType = null;
         String compFormula = null;
+        String result = null;
         if (c.moveToFirst()) {
             compType = ComputationTypes.values()[c.getInt(0)];
             if (!c.isNull(1)) {
@@ -189,19 +190,19 @@ public class MedCalcActivity extends AppCompatActivity {
             if (compType != null) {
                 switch (compType) {
                     case SKF:
-                        calculateSKF();
+                        result = String.valueOf(calculateSKF());
                         break;
                     case IMT:
-                        calculateIMT();
+                        result = String.valueOf(calculateIMT());
                         break;
                     case BSA:
-                        calculateBSA();
+                        result = String.valueOf(calculateBSA());
                         break;
                     case CPK:
-                        calculateCPK();
+                        result = String.valueOf(calculateCPK());
                         break;
                     case CHA2DS2:
-                        calculateCHA2DS2();
+                        result = String.valueOf(calculateCHA2DS2());
                         break;
                     default:
                         Toast.makeText(MedCalcActivity.this, "Расчет не поддерживается", Toast.LENGTH_SHORT).show();
@@ -219,12 +220,16 @@ public class MedCalcActivity extends AppCompatActivity {
             descriptionTextView.setText(compDesc);
             descriptionTextView.setVisibility(View.VISIBLE);
         }
+        if (result != null && !result.isEmpty()) {
+            resultTextView.setText(String.format("Результат = %s", String.valueOf(result)));
+            resultTextView.setVisibility(View.VISIBLE);
+        }
     }
 
     /**
      * Расчет по шкале CHA2DS2-VASc
      */
-    private void calculateCHA2DS2() {
+    private int calculateCHA2DS2() {
         int chf;
         int hypertension;
         int age75;
@@ -262,16 +267,13 @@ public class MedCalcActivity extends AppCompatActivity {
             throw e;
         }
 
-        int result = 1 * chf + 1 * hypertension + 2 * age75 + 1 * diabetes + 2 * stroke + 1 * vascular + 1 * age65 + 1 * sexCategory;
-
-        resultTextView.setText(String.format("Результат = %s", String.valueOf(result)));
-        resultTextView.setVisibility(View.VISIBLE);
+        return 1 * chf + 1 * hypertension + 2 * age75 + 1 * diabetes + 2 * stroke + 1 * vascular + 1 * age65 + 1 * sexCategory;
     }
 
     /**
      * Расчет ЦПК (Цветовой показатель крови)
      */
-    private void calculateCPK() {
+    private double calculateCPK() {
         double hemoglobin;
         double erythrocytes;
         try {
@@ -285,16 +287,13 @@ public class MedCalcActivity extends AppCompatActivity {
             throw e;
         }
 
-        double result = (hemoglobin * 3) / erythrocytes;
-
-        resultTextView.setText(String.format("ЦПК = %s", String.valueOf(result)));
-        resultTextView.setVisibility(View.VISIBLE);
+         return (hemoglobin * 3) / erythrocytes;
     }
 
     /**
      * Расчет площади тела по формуле Дюбуа
      */
-    private void calculateBSA() {
+    private double calculateBSA() {
         double weight;
         double height;
         try {
@@ -308,16 +307,13 @@ public class MedCalcActivity extends AppCompatActivity {
             throw e;
         }
 
-        double result = 0.007184 * Math.pow(height, 0.725) * Math.pow(weight, 0.425);
-
-        resultTextView.setText(String.format("BSA = %s", String.valueOf(result)));
-        resultTextView.setVisibility(View.VISIBLE);
+         return 0.007184 * Math.pow(height, 0.725) * Math.pow(weight, 0.425);
     }
 
     /**
      * Расчет Скорости Клубочковой Фильтрации
      */
-    private void calculateSKF() {
+    private double calculateSKF() {
         double sexCoefficient = 1.23; //For men
         Spinner sexSpinner = (Spinner) findViewById(CompParams.SKF_SEX.ordinal());
         if (((String) sexSpinner.getSelectedItem()).equalsIgnoreCase("женский")) {
@@ -341,16 +337,13 @@ public class MedCalcActivity extends AppCompatActivity {
             throw e;
         }
 
-        double result = sexCoefficient * ((140.0 - age) * weight) / сreatinine;
-
-        resultTextView.setText(String.format("СКФ = %s", String.valueOf(result)));
-        resultTextView.setVisibility(View.VISIBLE);
+        return sexCoefficient * ((140.0 - age) * weight) / сreatinine;
     }
 
     /**
      * Расчет Индекса Массы Тела
      */
-    private void calculateIMT() {
+    private double calculateIMT() {
         double weight;
         double height;
         try {
@@ -364,10 +357,7 @@ public class MedCalcActivity extends AppCompatActivity {
             throw e;
         }
 
-        double result = (weight * 100.0 * 100.0) / (height * height);
-
-        resultTextView.setText(String.format("ИМТ = %s", String.valueOf(result)));
-        resultTextView.setVisibility(View.VISIBLE);
+         return (weight * 100.0 * 100.0) / (height * height);
     }
 
 }
