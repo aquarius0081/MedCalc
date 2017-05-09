@@ -7,5 +7,6 @@ public enum ComputationTypes {
     IMT,
     BSA,
     CPK,
-    CHA2DS2
+    CHA2DS2,
+    HASBLED
 }

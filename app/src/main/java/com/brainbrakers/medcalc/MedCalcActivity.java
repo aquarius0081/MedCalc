@@ -204,6 +204,9 @@ public class MedCalcActivity extends AppCompatActivity {
                     case CHA2DS2:
                         result = String.valueOf(calculateCHA2DS2());
                         break;
+                    case HASBLED:
+                        result = String.valueOf(calculateHASBLED());
+                        break;
                     default:
                         Toast.makeText(MedCalcActivity.this, "Расчет не поддерживается", Toast.LENGTH_SHORT).show();
                         break;
@@ -224,6 +227,58 @@ public class MedCalcActivity extends AppCompatActivity {
             resultTextView.setText(String.format("Результат = %s", String.valueOf(result)));
             resultTextView.setVisibility(View.VISIBLE);
         }
+    }
+
+    /**
+     * Расчет по шкале HAS-BLED
+     *
+     * @return результат расчета
+     */
+    private int calculateHASBLED() {
+        int hypertension;
+        int abnormalLiverFunction;
+        int abnormalRenalFunction;
+        int stroke;
+        int bleedingHistoryOrPredisposition;
+        int labileInternationalNormalizedRatio;
+        int elderly65Years;
+        int drugs;
+        int alcohol;
+        try {
+            CheckBox hypertensionCheckBox = (CheckBox) findViewById(CompParams.HASBLED_HYPERTENSION.ordinal());
+            hypertension = hypertensionCheckBox.isChecked() ? 1 : 0;
+
+            CheckBox liverCheckBox = (CheckBox) findViewById(CompParams.HASBLED_ABNORMAL_LIVER_FUNCTION.ordinal());
+            abnormalLiverFunction = liverCheckBox.isChecked() ? 1 : 0;
+
+            CheckBox renalCheckBox = (CheckBox) findViewById(CompParams.HASBLED_ABNORMAL_RENAL_FUNCTION.ordinal());
+            abnormalRenalFunction = renalCheckBox.isChecked() ? 1 : 0;
+
+            CheckBox strokeCheckBox = (CheckBox) findViewById(CompParams.HASBLED_STROKE.ordinal());
+            stroke = strokeCheckBox.isChecked() ? 1 : 0;
+
+            CheckBox bleedingCheckBox = (CheckBox) findViewById(CompParams.HASBLED_BLEEDING_HISTORY_OR_PREDISPOSITION.ordinal());
+            bleedingHistoryOrPredisposition = bleedingCheckBox.isChecked() ? 1 : 0;
+
+            CheckBox labileCheckBox = (CheckBox) findViewById(CompParams.HASBLED_LABILE_INTERNATIONAL_NORMALIZED_RATIO.ordinal());
+            labileInternationalNormalizedRatio = labileCheckBox.isChecked() ? 1 : 0;
+
+            CheckBox elderly65CheckBox = (CheckBox) findViewById(CompParams.HASBLED_ELDERLY_65_YEARS.ordinal());
+            elderly65Years = elderly65CheckBox.isChecked() ? 1 : 0;
+
+            CheckBox drugsCheckBox = (CheckBox) findViewById(CompParams.HASBLED_DRUGS_CONCOMITANTLY.ordinal());
+            drugs = drugsCheckBox.isChecked() ? 1 : 0;
+
+            CheckBox alcoholCheckBox2 = (CheckBox) findViewById(CompParams.HASBLED_ALCOHOL_CONCOMITANTLY.ordinal());
+            alcohol = alcoholCheckBox2.isChecked() ? 1 : 0;
+        } catch (Exception e) {
+            Toast.makeText(MedCalcActivity.this, R.string.incorrectInputError, Toast.LENGTH_SHORT).show();
+            throw e;
+        }
+
+        return 1 * hypertension + 1 * abnormalLiverFunction + 1 * abnormalRenalFunction +
+                1 * stroke + 1 * bleedingHistoryOrPredisposition + 1 * labileInternationalNormalizedRatio +
+                1 * elderly65Years + 1 * drugs + 1 * alcohol;
     }
 
     /**
