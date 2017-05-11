@@ -207,6 +207,9 @@ public class MedCalcActivity extends AppCompatActivity {
                     case HASBLED:
                         result = String.valueOf(calculateHASBLED());
                         break;
+                    case CHILDPUGH:
+                        result = String.valueOf(calculateCHILDPUGH());
+                        break;
                     default:
                         Toast.makeText(MedCalcActivity.this, "Расчет не поддерживается", Toast.LENGTH_SHORT).show();
                         break;
@@ -227,6 +230,23 @@ public class MedCalcActivity extends AppCompatActivity {
             resultTextView.setText(String.format("Результат = %s", String.valueOf(result)));
             resultTextView.setVisibility(View.VISIBLE);
         }
+    }
+
+    /**
+     * Расчет по шкале Child-Turcotte-Pugh
+     *
+     * @return результат расчета
+     */
+    private int calculateCHILDPUGH() {
+        Spinner ascitesSpinner = (Spinner) findViewById(CompParams.CHILDPUGH_ASCITES.ordinal());
+        Spinner albuminSpinner = (Spinner) findViewById(CompParams.CHILDPUGH_ALBUMIN.ordinal());
+        Spinner bilirubinSpinner = (Spinner) findViewById(CompParams.CHILDPUGH_BILIRUBIN.ordinal());
+        Spinner encephalopathySpinner = (Spinner) findViewById(CompParams.CHILDPUGH_ENCEPHALOPATHY.ordinal());
+        Spinner inrSpinner = (Spinner) findViewById(CompParams.CHILDPUGH_INR.ordinal());
+
+        return (ascitesSpinner.getSelectedItemPosition() + 1) + (albuminSpinner.getSelectedItemPosition() + 1) +
+                (bilirubinSpinner.getSelectedItemPosition() + 1) + (encephalopathySpinner.getSelectedItemPosition() + 1) +
+                (inrSpinner.getSelectedItemPosition() + 1);
     }
 
     /**

@@ -8,5 +8,6 @@ public enum ComputationTypes {
     BSA,
     CPK,
     CHA2DS2,
-    HASBLED
+    HASBLED,
+    CHILDPUGH
 }
