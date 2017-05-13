@@ -9,5 +9,6 @@ public enum ComputationTypes {
     CPK,
     CHA2DS2,
     HASBLED,
-    CHILDPUGH
+    CHILDPUGH,
+    COMAGLASGOW
 }

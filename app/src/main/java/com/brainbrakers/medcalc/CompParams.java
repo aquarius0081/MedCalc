@@ -37,5 +37,8 @@ public enum CompParams {
     /**
      * Удлинение ПВ (сек.)
      */
-    CHILDPUGH_INR
+    CHILDPUGH_INR,
+    COMAGLASGOW_EYE_RESPONSE,
+    COMAGLASGOW_VERBAL_RESPONSE,
+    COMAGLASGOW_MOTOR_RESPONSE
 }

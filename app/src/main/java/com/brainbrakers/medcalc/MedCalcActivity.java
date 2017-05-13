@@ -120,7 +120,6 @@ public class MedCalcActivity extends AppCompatActivity {
 
                             switch (paramType) {
                                 case Integer:
-
                                     EditText editText = new EditText(MedCalcActivity.this);
                                     editText.setId(paramId);
                                     layoutParams =
@@ -210,6 +209,9 @@ public class MedCalcActivity extends AppCompatActivity {
                     case CHILDPUGH:
                         result = String.valueOf(calculateCHILDPUGH());
                         break;
+                    case COMAGLASGOW:
+                        result = String.valueOf(calculateCOMAGLASGOW());
+                        break;
                     default:
                         Toast.makeText(MedCalcActivity.this, "Расчет не поддерживается", Toast.LENGTH_SHORT).show();
                         break;
@@ -230,6 +232,20 @@ public class MedCalcActivity extends AppCompatActivity {
             resultTextView.setText(String.format("Результат = %s", String.valueOf(result)));
             resultTextView.setVisibility(View.VISIBLE);
         }
+    }
+
+    /**
+     * Расчет по шкале комы Глазго
+     *
+     * @return результат расчета
+     */
+    private int calculateCOMAGLASGOW() {
+        Spinner eyeResponseSpinner = (Spinner) findViewById(CompParams.COMAGLASGOW_EYE_RESPONSE.ordinal());
+        Spinner verbalResponseSpinner = (Spinner) findViewById(CompParams.COMAGLASGOW_VERBAL_RESPONSE.ordinal());
+        Spinner motorResponseSpinner = (Spinner) findViewById(CompParams.COMAGLASGOW_MOTOR_RESPONSE.ordinal());
+
+        return (eyeResponseSpinner.getSelectedItemPosition() + 1) + (verbalResponseSpinner.getSelectedItemPosition() + 1) +
+                (motorResponseSpinner.getSelectedItemPosition() + 1);
     }
 
     /**
